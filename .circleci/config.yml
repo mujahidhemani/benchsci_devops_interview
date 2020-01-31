@@ -65,6 +65,7 @@ jobs:
           root: .
           paths:
             - packer/packer       
+  
   packer-build:
     docker:
      - image: circleci/python:3.6.9
@@ -88,28 +89,30 @@ jobs:
           root: .
           paths:
             - packer/manifest.json
-    cleanup:
-      docker:
-      - image: circleci/python:3.6.9
-      working_directory: ~/repo
-      steps:
-        - checkout
-        - restore_cache:
+  
+  cleanup:
+    docker:
+     - image: circleci/python:3.6.9
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
             - v1-dependencies-{{ checksum "webserver/requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-        - attach_workspace:
-            at: ~/repo
-        - run:
-            name: Remove packer build
-            command: | 
-              . venv/bin/activate
-              sudo apt-get install jq
-              cd packer
-              export AMI_ID=`cat manifest.json | jq -r .builds[0].artifact_id |  cut -d':' -f2`
-              export SNAP_ID=`aws ec2 describe-images --output text --image-id $AMI_ID --query Images[*].BlockDeviceMappings[*].Ebs.SnapshotId
-              aws ec2 deregister-image --image-id $AMI_ID
-              aws ec2 deregister-snapshot --snapshot-id $SNAP_ID
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Remove packer build
+          command: | 
+            . venv/bin/activate
+            sudo apt-get install jq
+            cd packer
+            export AMI_ID=`cat manifest.json | jq -r .builds[0].artifact_id |  cut -d':' -f2`
+            export SNAP_ID=`aws ec2 describe-images --output text --image-id $AMI_ID --query Images[*].BlockDeviceMappings[*].Ebs.SnapshotId
+            aws ec2 deregister-image --image-id $AMI_ID
+            aws ec2 deregister-snapshot --snapshot-id $SNAP_ID
 
 workflows:
   version: 2
