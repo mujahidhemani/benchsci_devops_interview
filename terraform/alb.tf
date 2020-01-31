@@ -28,10 +28,10 @@ resource "aws_security_group" "lb" {
   }
 
   ingress {
-      from_port = 0
-      to_port = 0
-      protocol = "icmp"
-      cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   lifecycle {
@@ -43,7 +43,7 @@ resource "aws_lb_listener" "http-80" {
   load_balancer_arn = aws_lb.lb.arn
   port              = "80"
   protocol          = "HTTP"
-  
+
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.target-group.arn

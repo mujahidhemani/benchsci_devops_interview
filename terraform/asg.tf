@@ -61,10 +61,10 @@ resource "aws_security_group" "bsci" {
   }
 
   ingress {
-      from_port = 22
-      to_port = 22
-      protocol = "tcp"
-      cidr_blocks = ["104.154.0.0/15"]
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["104.154.0.0/15"]
   }
 
   egress {
@@ -74,11 +74,11 @@ resource "aws_security_group" "bsci" {
     self      = true
   }
 
-    ingress {
-      from_port = 0
-      to_port = 0
-      protocol = "icmp"
-      cidr_blocks = ["0.0.0.0/0"]
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   lifecycle {
