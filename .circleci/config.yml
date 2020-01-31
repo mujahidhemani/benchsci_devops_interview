@@ -59,7 +59,8 @@ jobs:
           name: validate packer build
           command: |
             . venv/bin/activate 
-            cd packer && packer validate webserver-ami.json
+            cd packer
+            packer validate webserver-ami.json
       - persist_to_workspace:
           root: .
           paths:
@@ -74,7 +75,9 @@ jobs:
           at: ~/repo
       - run:
           name: Build webserver ami
-          command: cd packer && packer build webserver-ami.json
+          command: | 
+            cd packer 
+            packer build webserver-ami.json
           #working_directory: ~/repo/packer
       - persist_to_workspace:
           root: .
