@@ -112,7 +112,7 @@ jobs:
             export AMI_ID=`cat manifest.json | jq -r .builds[0].artifact_id |  cut -d':' -f2`
             export SNAP_ID=`aws ec2 describe-images --output text --image-id $AMI_ID --query Images[*].BlockDeviceMappings[*].Ebs.SnapshotId`
             aws ec2 deregister-image --image-id $AMI_ID
-            aws ec2 deregister-snapshot --snapshot-id $SNAP_ID
+            aws ec2 delete-snapshot --snapshot-id $SNAP_ID
 
 workflows:
   version: 2
