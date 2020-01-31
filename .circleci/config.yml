@@ -80,10 +80,10 @@ jobs:
           at: ~/repo
       - run:
           name: Build webserver ami
-          command: |  
-            cd packer 
+          command: | 
+            . venv/bin/activate
+            cd packer
             ./packer build webserver-ami.json
-          #working_directory: ~/repo/packer
       - persist_to_workspace:
           root: .
           paths:
