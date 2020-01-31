@@ -1,0 +1,19 @@
+# You're free to change the jobs and the workflow logic as needed.
+# Doc: https://circleci.com/docs/2.0/getting-started/#running-your-first-circleci-build
+version: 2.1
+jobs:
+  install:
+  test:
+  deploy:
+
+workflows:
+ version: 2
+ deploy-server:
+   jobs:
+     - install
+     - test:
+         requires:
+           - install
+     - deploy:
+         requires:
+           - deploy
