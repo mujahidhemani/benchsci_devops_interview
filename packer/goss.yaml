@@ -14,7 +14,7 @@ file:
     exists: true
     mode: "0744"
     owner: benchsci
-    group: fuckoffs
+    group: benchsci
     filetype: directory
   /opt/webserver/app.py:
     exists: true
