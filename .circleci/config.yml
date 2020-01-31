@@ -59,7 +59,8 @@ jobs:
           name: validate packer build
           command: |
             . venv/bin/activate 
-            packer validate ./packer/webserver-ami.json
+            cd packer && packer validate ./packer/webserver-ami.json
+           
   packer-build:
     docker:
      - image: circleci/python:3.6.9
