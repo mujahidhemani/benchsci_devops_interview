@@ -60,5 +60,15 @@ jobs:
           root: .
           paths:
             - packer/manifest.json
+workflows:
+  version: 2
+  build-and-package:
+    jobs:
+      - build
+      - packer-validate
+      - packer-build
+        requires:
+          - build
+          - packer-validate
 
       
