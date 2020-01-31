@@ -1,0 +1,62 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install packages
+      yum:
+        name: "{{ packages }}"
+      vars:
+        packages:
+        - wget
+        - python3
+        - python3-pip
+    
+    - name: Create webserver service user
+      user:
+        name: benchsci
+        shell: /usr/sbin/nologin
+
+    - name: Install webserver service
+      copy:
+        src: ../webserver
+        dest: /opt
+        owner: benchsci
+        group: benchsci
+        mode: "0640"
+        directory_mode: "0744"
+      
+    - name: Install webserver dependencies
+      pip:
+        requirements: /opt/webserver/requirements.txt
+        executable: pip3
+
+    - name: Install webserver service unit file
+      copy:
+        src: webserver.service
+        dest: /etc/systemd/system
+
+    - name: Enable webserver service
+      systemd:
+        name: webserver
+        enabled: yes
+        daemon_reload: yes
+        state: started
+    
+    ### Server testing ###
+    - name: Install goss
+      get_url:
+        url: https://github.com/aelsabbahy/goss/releases/download/v0.3.9/goss-linux-amd64
+        dest: /usr/local/bin/goss
+        mode: "0755"
+ 
+    - name: Copy test
+      copy:
+        src: goss.yaml
+        dest: goss.yaml
+        mode: "0640"
+ 
+    - name: Run goss tests
+      command: /usr/local/bin/goss v goss.yaml
+      register: goss_output
+ 
+    - debug:
+        var: goss_output.stdout 
