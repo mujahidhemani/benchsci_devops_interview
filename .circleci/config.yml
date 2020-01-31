@@ -66,9 +66,9 @@ workflows:
     jobs:
       - build
       - packer-validate
-      - packer-build
-        requires:
-          - build
-          - packer-validate
+      - packer-build:
+          requires:
+            - build
+            - packer-validate
 
       
