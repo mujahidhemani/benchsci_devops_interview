@@ -37,25 +37,35 @@ jobs:
             pytest
   packer-validate:
     docker:
-      - image: hashicorp/packer:1.5.1
+      - image: circleci/python:3.6.9
     
     working_directory: ~/repo
     steps:
       - checkout
-
+      - run:
+          name: Setup packer build environment
+          command: | 
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install ansible
+            curl https://releases.hashicorp.com/packer/1.5.1/packer_1.5.1_linux_amd64.zip > /tmp/packer.zip
+            unzip /tmp/packer
+            sudo mv packer /usr/local/bin
       - run:
           name: validate packer build
-          command: packer validate ./packer/webserver-ami.json
+          command: |
+            . venv/bin/activate 
+            packer validate ./packer/webserver-ami.json
   packer-build:
     docker:
-     - image: hashicorp/packer:1.5.1
+     - image: circleci/python:3.6.9
     working_directory: ~/repo
     steps:
       - checkout
       - run:
           name: Build webserver ami
-          command: packer build webserver-ami.json
-          working_directory: ~/repo/packer
+          command: cd packer && packer build webserver-ami.json
+          #working_directory: ~/repo/packer
       - persist_to_workspace:
           root: .
           paths:
