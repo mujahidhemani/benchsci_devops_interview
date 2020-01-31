@@ -42,15 +42,19 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "webserver/requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
       - run:
           name: Setup packer build environment
           command: | 
             python3 -m venv venv
             . venv/bin/activate
-            pip install ansible
+            pip install -r webserver/requirements.txt
             curl https://releases.hashicorp.com/packer/1.5.1/packer_1.5.1_linux_amd64.zip > /tmp/packer.zip
-            unzip /tmp/packer.zip
-            sudo mv packer /usr/local/bin
+            unzip /tmp/packer.zip -d /usr/local/bin
       - run:
           name: validate packer build
           command: |
