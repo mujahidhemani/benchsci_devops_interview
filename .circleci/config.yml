@@ -54,19 +54,24 @@ jobs:
             . venv/bin/activate
             pip install -r webserver/requirements.txt
             curl https://releases.hashicorp.com/packer/1.5.1/packer_1.5.1_linux_amd64.zip > /tmp/packer.zip
-            sudo unzip /tmp/packer.zip -d /usr/local/bin
+            unzip /tmp/packer.zip -d ~/repo/packer
       - run:
           name: validate packer build
           command: |
             . venv/bin/activate 
             cd packer && packer validate webserver-ami.json
-           
+      - persist_to_workspace:
+          root: .
+          paths:
+            - packer/packer       
   packer-build:
     docker:
      - image: circleci/python:3.6.9
     working_directory: ~/repo
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/repo
       - run:
           name: Build webserver ami
           command: cd packer && packer build webserver-ami.json
