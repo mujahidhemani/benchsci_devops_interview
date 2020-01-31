@@ -4,14 +4,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
       - image: circleci/python:3.6.9
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
 
     working_directory: ~/repo
 
@@ -42,3 +35,31 @@ jobs:
           command: |
             . venv/bin/activate
             pytest
+  package-validate:
+    docker:
+      - image: hashicorp/packer:1.5.1
+    
+    working_directory: ~/repo
+    steps:
+      - checkout
+
+      - run:
+          name: validate packer build
+          command: packer validate ./packer/webserver-ami.json
+  packer-build:
+    docker:
+     - image: hashicorp/packer:1.5.1
+    attach_workspace:
+      at: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Build webserver ami
+          command: packer build webserver-ami.json
+          working_directory: ~/repo/packer
+      - persist_to_workspace:
+        root: .
+        paths:
+          - packer/manifest.json
+
+      
