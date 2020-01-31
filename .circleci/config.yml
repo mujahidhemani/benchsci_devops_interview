@@ -90,7 +90,7 @@ jobs:
             - packer/manifest.json
     cleanup:
       docker:
-        - image: circleci/python:3.6.9
+      - image: circleci/python:3.6.9
       working_directory: ~/repo
       steps:
         - checkout
