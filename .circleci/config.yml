@@ -57,8 +57,8 @@ jobs:
           command: packer build webserver-ami.json
           working_directory: ~/repo/packer
       - persist_to_workspace:
-        root: .
-        paths:
-          - packer/manifest.json
+          root: .
+          paths:
+            - packer/manifest.json
 
       
