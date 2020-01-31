@@ -59,7 +59,7 @@ jobs:
           name: validate packer build
           command: |
             . venv/bin/activate 
-            cd packer && packer validate ./packer/webserver-ami.json
+            cd packer && packer validate webserver-ami.json
            
   packer-build:
     docker:
