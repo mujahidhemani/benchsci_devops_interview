@@ -1,6 +1,6 @@
 
-# Created by https://www.gitignore.io/api/vim,packer,python,ansible,terraform
-# Edit at https://www.gitignore.io/?templates=vim,packer,python,ansible,terraform
+# Created by https://www.gitignore.io/api/vim,packer,python,ansible,vagrant,terraform
+# Edit at https://www.gitignore.io/?templates=vim,packer,python,ansible,vagrant,terraform
 
 ### Ansible ###
 *.retry
@@ -11,6 +11,9 @@ packer_cache/
 
 # For built boxes
 *.box
+
+# Manifest files
+manifest.json
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -147,6 +150,15 @@ override.tf.json
 # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
 # example: *tfplan*
 
+### Vagrant ###
+# General
+.vagrant/*
+
+# Log files (if you are creating logs in debug mode, uncomment this)
+# *.log
+
+### Vagrant Patch ###
+
 ### Vim ###
 # Swap
 [._]*.s[a-v][a-z]
@@ -172,4 +184,4 @@ tags
 # Coc configuration directory
 .vim
 
-# End of https://www.gitignore.io/api/vim,packer,python,ansible,terraform
+# End of https://www.gitignore.io/api/vim,packer,python,ansible,vagrant,terraform
