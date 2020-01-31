@@ -54,13 +54,13 @@ jobs:
             . venv/bin/activate
             pip install -r webserver/requirements.txt
             curl https://releases.hashicorp.com/packer/1.5.1/packer_1.5.1_linux_amd64.zip > /tmp/packer.zip
-            unzip /tmp/packer.zip -d ~/repo/packer
+            unzip /tmp/packer.zip -d ~/repo/packer/
       - run:
           name: validate packer build
           command: |
             . venv/bin/activate 
             cd packer
-            packer validate webserver-ami.json
+            ./packer validate webserver-ami.json
       - persist_to_workspace:
           root: .
           paths:
@@ -75,9 +75,9 @@ jobs:
           at: ~/repo
       - run:
           name: Build webserver ami
-          command: | 
+          command: |  
             cd packer 
-            packer build webserver-ami.json
+            ./packer build webserver-ami.json
           #working_directory: ~/repo/packer
       - persist_to_workspace:
           root: .
