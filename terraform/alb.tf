@@ -63,6 +63,7 @@ resource "aws_lb_target_group" "target-group" {
   health_check {
     enabled  = true
     interval = 10
+    path = "/hello"
   }
 }
 
