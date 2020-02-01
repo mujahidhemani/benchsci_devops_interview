@@ -93,9 +93,10 @@ jobs:
     environment:
       TF_IN_AUTOMATION: 1
       TF_WORKSPACE: circleci
+      TF_CLI_CONFIG_FILE: $CIRCLE_WORKING_DIRECTORY/.terraformrc
     docker:
       - image: hashicorp/terraform:0.12.20
-    working_directory: ~/repo
+    working_directory: /root/repo
     steps:
       - checkout
       - attach_workspace:
@@ -104,7 +105,7 @@ jobs:
           name: terraform rc
           command: |
             echo $TERRAFORMRC > /tmp/encoded
-            base64 -d /tmp/encoded > .terraformrc
+            base64 -d /tmp/encoded > $TF_CLI_CONFIG_FILE
       - run:
           name: install jq
           command: apk add jq
@@ -125,7 +126,8 @@ jobs:
     environment:
       TF_IN_AUTOMATION: 1
       TF_WORKSPACE: prod
-    working_directory: ~/repo
+      TF_CLI_CONFIG_FILE: $CIRCLE_WORKING_DIRECTORY/.terraformrc
+    working_directory: /root/repo
     docker:
       - image: hashicorp/terraform:0.12.20
     steps:
