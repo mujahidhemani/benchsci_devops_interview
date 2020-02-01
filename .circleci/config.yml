@@ -89,7 +89,37 @@ jobs:
           root: .
           paths:
             - packer/manifest.json
-  
+  terraform:
+    environment:
+      TF_IN_AUTOMATION: 1
+    docker:
+      - image: hashicorp/terraform:0.12.20
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo
+      - run: 
+          name: terraform rc
+          command: |
+            echo $TERRAFORMRC > /tmp/encoded
+            base64 -d /tmp/encoded > ~/.terraformrc
+      - run:
+          name: install jq
+          command: apk add jq
+      - run: 
+          name: Get AMI ID from manifest
+          command: |
+            cd packer
+            export TF_VAR_ami_id=`cat manifest.json | jq -r .builds[0].artifact_id |  cut -d':' -f2`
+      - run:
+          name: Terraform
+          command: |
+            cd terraform
+            terraform workspace select circleci
+            terraform init
+            terraform plan
+      
   cleanup:
     docker:
      - image: circleci/python:3.6.9
@@ -124,8 +154,11 @@ workflows:
           requires:
             - build
             - packer-validate
-      - cleanup:
+      - terraform:
           requires:
             - packer-build
+      - cleanup:
+          requires:
+            - terraform
 
       
