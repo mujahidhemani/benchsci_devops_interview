@@ -92,9 +92,11 @@ jobs:
   terraform:
     environment:
       TF_IN_AUTOMATION: 1
+      TF_WORKSPACE: circleci
+      TF_CLI_CONFIG_FILE: /root/repo/.terraformrc
     docker:
       - image: hashicorp/terraform:0.12.20
-    working_directory: ~/repo
+    working_directory: /root/repo
     steps:
       - checkout
       - attach_workspace:
@@ -103,23 +105,47 @@ jobs:
           name: terraform rc
           command: |
             echo $TERRAFORMRC > /tmp/encoded
-            base64 -d /tmp/encoded > ~/.terraformrc
+            base64 -d /tmp/encoded > $TF_CLI_CONFIG_FILE
       - run:
           name: install jq
           command: apk add jq
-      - run: 
-          name: Get AMI ID from manifest
-          command: |
-            cd packer
-            export TF_VAR_ami_id=`cat manifest.json | jq -r .builds[0].artifact_id |  cut -d':' -f2`
       - run:
           name: Terraform
           command: |
-            cd terraform
-            terraform workspace select circleci
-            terraform init
+            cd packer
+            export TF_VAR_ami_id=`cat manifest.json | jq -r .builds[0].artifact_id |  cut -d':' -f2`
+            cd ../terraform
+            terraform init -input=false
             terraform plan
-      
+      - persist_to_workspace:
+          root: .
+          paths:
+            - terraform/.terraform
+            - .terraformrc
+  terraform-apply:
+    environment:
+      TF_IN_AUTOMATION: 1
+      TF_WORKSPACE: prod
+      TF_CLI_CONFIG_FILE: /root/.terraformrc
+    working_directory: /root/repo
+    docker:
+      - image: hashicorp/terraform:0.12.20
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: install jq
+          command: apk add jq
+      - run:
+          name: Terraform
+          command: |
+            cd packer
+            export TF_VAR_ami_id=`cat manifest.json | jq -r .builds[0].artifact_id |  cut -d':' -f2`
+            cd ../terraform
+            terraform workspace select prod
+            terraform apply --auto-approve
+    
   cleanup:
     docker:
      - image: circleci/python:3.6.9
@@ -146,7 +172,7 @@ jobs:
 
 workflows:
   version: 2
-  build-and-package:
+  build-and-test:
     jobs:
       - build
       - packer-validate
@@ -157,8 +183,27 @@ workflows:
       - terraform:
           requires:
             - packer-build
+      - terraform-apply:
+          requires:
+            - terraform
+          filters:
+            branches:
+              only: master
       - cleanup:
           requires:
             - terraform
-
-      
+          filters:
+            branches:
+              ignore: master
+            
+  # build-and-deploy:
+  #   jobs:
+  #     - build
+  #     - packer-validate
+  #     - packer-build:
+  #         requires:
+  #           - build
+  #           - packer-validate
+  #     - terraform-apply:
+  #         requires:
+  #           - packer-build
