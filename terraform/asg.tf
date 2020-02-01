@@ -27,27 +27,6 @@ resource "aws_autoscaling_group" "asg" {
 
 }
 
-# resource "aws_security_group" "allow-out" {
-#   name        = "allow_out"
-#   description = "allow web traffic out"
-#   vpc_id      = var.vpc_id
-
-#   egress {
-#     from_port   = 80
-#     to_port     = 80
-#     protocol    = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-
-#   egress {
-#     from_port   = 443
-#     to_port     = 443
-#     protocol    = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-# }
-
-
 resource "aws_security_group" "bsci" {
   name        = "benchsci-webservers"
   description = "benchsci security group"

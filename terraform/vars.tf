@@ -4,5 +4,5 @@ variable "cidrblock" {
 }
 
 variable "ami_id" {
-  default = "ami-07c2f42209065b99a"
+  
 }
