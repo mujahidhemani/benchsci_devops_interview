@@ -120,7 +120,7 @@ jobs:
           root: .
           paths:
             - terraform/.terraform
-            - ~/.terraformrc
+            - .terraformrc
   terraform-apply:
     environment:
       TF_IN_AUTOMATION: 1
@@ -132,19 +132,9 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/repo
-      - run: 
-          name: terraform rc
-          command: |
-            echo $TERRAFORMRC > /tmp/encoded
-            base64 -d /tmp/encoded > ~/.terraformrc
       - run:
           name: install jq
           command: apk add jq
-      - run: 
-          name: Get AMI ID from manifest
-          command: |
-            cd packer
-            export TF_VAR_ami_id=`cat manifest.json | jq -r .builds[0].artifact_id |  cut -d':' -f2`
       - run:
           name: Terraform
           command: |
