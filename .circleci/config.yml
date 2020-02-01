@@ -93,7 +93,7 @@ jobs:
     environment:
       TF_IN_AUTOMATION: 1
       TF_WORKSPACE: circleci
-      TF_CLI_CONFIG_FILE: $CIRCLE_WORKING_DIRECTORY/.terraformrc
+      TF_CLI_CONFIG_FILE: /root/repo/.terraformrc
     docker:
       - image: hashicorp/terraform:0.12.20
     working_directory: /root/repo
@@ -126,7 +126,7 @@ jobs:
     environment:
       TF_IN_AUTOMATION: 1
       TF_WORKSPACE: prod
-      TF_CLI_CONFIG_FILE: $CIRCLE_WORKING_DIRECTORY/.terraformrc
+      TF_CLI_CONFIG_FILE: /root/.terraformrc
     working_directory: /root/repo
     docker:
       - image: hashicorp/terraform:0.12.20
