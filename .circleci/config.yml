@@ -116,8 +116,8 @@ jobs:
           name: Terraform
           command: |
             cd terraform
-            terraform init
             terraform workspace select circleci
+            terraform init
             terraform plan
       
   cleanup:
