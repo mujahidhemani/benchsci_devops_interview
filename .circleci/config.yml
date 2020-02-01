@@ -104,7 +104,7 @@ jobs:
           name: terraform rc
           command: |
             echo $TERRAFORMRC > /tmp/encoded
-            base64 -d /tmp/encoded > ~/.terraformrc
+            base64 -d /tmp/encoded > .terraformrc
       - run:
           name: install jq
           command: apk add jq
