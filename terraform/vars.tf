@@ -4,5 +4,5 @@ variable "cidrblock" {
 }
 
 variable "ami_id" {
-  
+
 }

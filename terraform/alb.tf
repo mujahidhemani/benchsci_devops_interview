@@ -28,7 +28,7 @@ resource "aws_security_group" "lb" {
   }
 
   ingress {
-    from_port   = 0
+    from_port   = 8
     to_port     = 0
     protocol    = "icmp"
     cidr_blocks = ["0.0.0.0/0"]
@@ -63,7 +63,7 @@ resource "aws_lb_target_group" "target-group" {
   health_check {
     enabled  = true
     interval = 10
-    path = "/hello"
+    path     = "/hello"
   }
 }
 
