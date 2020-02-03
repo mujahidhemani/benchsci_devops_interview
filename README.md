@@ -37,11 +37,22 @@ The webserver application is built and deployed to AWS by CircleCI. The state is
 
 The webserver is a Flask Python app, deployed within an EC2 instance. The EC2 instance is built by Packer, the resulting AMI template ID is saved in the `manifest.json` file that Packer outputs. Terraform takes the AMI ID as input and deploys it in an autoscaling group (ASG), behind an application load balancer (ALB). When Terraform updates the launch config for the ASG, it triggers a deployment of new EC2 instances, and deletes the old ones afterwards.
 
-Using an autoscaling group allows the application to be resilient to incidents that would affect an AWS availability zone, and also allows to do a rolling deployment of new EC2 instances
+Using an autoscaling group allows the application to be resilient to incidents that would affect an AWS availability zone, and also allows to do a rolling deployment of new EC2 instances.
 
 On commit, CircleCI runs `pytest` on the Flask application code. If that passes, it then triggers Packer to create an AMI. The AMI is configured by Ansible, which installs any prerequistes, the application itself, and configures the application to startup on boot with a systemd unit file. The AMI is tested with `goss` - a serverspec testing tool. If the goss tests pass, Packer will register the AMI as a template and will tag the AMI with the commit SHA from HEAD. The output of the build is stored in the `manifest.json` file, which is persisted to the CircleCI workspace. CircleCI will take the AMI ID from the `manifest.json` file, store it as an environment variable and pass it into Terraform as a variable. It will trigger a `terraform plan` in the circleci workspace to validate that the Terraform code is valid and can be theoretically deployed.
 
 If this is a non-master branch, there is a step at the end to clean up the AMI and its associated snapshot to reduce storage costs - as all non-master branches are treated as dev/feature branches. If this is the `master` branch, it will deploy the infrastructure to the `prod` workspace. In this project, `master` is treated as production, the branch should be protected and all tests (`pytest`, `goss`, `terraform plan`) must pass before merging code into `master`. 
+
+--------------------------
+
+**Infrastructure Diagram**:
+![](aws-arch.png)
+
+**Dev CI flow**:
+![](pipeline.png)
+
+**Master CI flow**:
+![](pipeline-master.png)
 
 ### Setup Terraform Cloud
 1. Clone repo to local workstation
