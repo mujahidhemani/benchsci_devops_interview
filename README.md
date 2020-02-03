@@ -27,3 +27,38 @@ The above cloud-native application was manually configured using Web console UIs
 - (Theoretically deployed) Working public IP address to see "Hello World from BenchSci!" in a web browser
 - Basic Documentation (README.md) and architecture diagram
 - Avoid: Unnecessary abstractions in the form of configuration templates and/or modules
+
+--------------------------
+## Solution:
+
+The webserver application is built and deployed to AWS by CircleCI. The state is stored on Terraform Cloud.
+
+### Architecture / Design
+
+The webserver is a Flask Python app, deployed within an EC2 instance. The EC2 instance is built by Packer, the resulting AMI template ID is saved in the `manifest.json` file that Packer outputs. Terraform takes the AMI ID as input and deploys it in an autoscaling group (ASG), behind an application load balancer (ALB). When Terraform updates the launch config for the ASG, it triggers a deployment of new EC2 instances, based on the 
+
+### Setup Terraform Cloud
+1. Clone repo to local workstation
+2. Run `terraform init` in the `./terraform` sub-folder
+3. Create two workspaces, one called circleci and one called prod
+4. Login to Terraform Cloud in the web browser
+5. Within each workspace you have just created, go to Settings and click General
+6. Changed `Execution Mode` to `Local` and click Save Settings
+7. From within Organization Settings, create a Team token, this will be needed to setup CircleCI
+
+### Setup CircleCI
+1. On your local workstation, take the Team token you have created and create a `.terraformrc` file in a temporary location, and insert your team token:
+
+```hcl
+credentials "app.terraform.io" {
+  token = "xxxxxx.atlasv1.zzzzzzzzzzzzz"
+}
+```
+2. Use `base64` to encode this file: `cat /tmp/.terraformrc | base64 -w 0` and save the output
+3. Login to CircleCI and add the repo
+4. In the project settings, click on Environment Variables
+5. Add the following environment variables:
+    - `AWS_ACCESS_KEY_ID`       - AWS API Key
+    - `AWS_SECRET_ACCESS_KEY`   - AWS API Secret
+    - `AWS_DEFAULT_REGION`      - AWS Region (set to `us-east-1` for example)
+    - `TERRAFORMRC`             - Base64 encoded file created from step 2
