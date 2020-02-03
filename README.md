@@ -79,3 +79,9 @@ credentials "app.terraform.io" {
     - `AWS_SECRET_ACCESS_KEY`   - AWS API Secret
     - `AWS_DEFAULT_REGION`      - AWS Region (set to `us-east-1` for example)
     - `TERRAFORMRC`             - Base64 encoded file created from step 2
+
+
+### Additional Notes
+- In an ideal world, commits to update the README should not trigger a CircleCI build
+- Changes to the Terraform infrastructure alone should not trigger the full CI workflow (It should just run the terraform steps, unless something in the python application or the packer build is being changed as well)
+- Terraform testing should test a plan against the `prod` workspace as well, and output the plan to Github (like Atlantis does)
