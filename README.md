@@ -46,12 +46,15 @@ If this is a non-master branch, there is a step at the end to clean up the AMI a
 --------------------------
 
 **Infrastructure Diagram**:
+
 ![](aws-arch.png)
 
 **Dev CI flow**:
+
 ![](pipeline.png)
 
 **Master CI flow**:
+
 ![](pipeline-master.png)
 
 ### Setup Terraform Cloud
